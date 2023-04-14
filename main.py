@@ -27,4 +27,40 @@ Description:
             which is the top sources. Thus, it is not exactly the perfect analog to the
             real life slime mold, which is often seen branching out. However, it does
             a beautiful spectacle to behold!
+
 """
+
+
+from PIL import Image
+import numpy as np
+import random
+
+WIDTH, HEIGHT = (50, 50)
+TOTAL_FRAMES = 100
+#MAIN LOOP
+def main():
+    """
+    Purpose: This function's primary objective is to house all of the primary functions
+    of the project.
+        This includes creating the background, all the agents, creating each frame, and
+        creating the gif
+    Pre-Conditions: none
+    Post-Contitions: creates gif in same directiory
+    Return: Returns nothing
+    """
+    #create trail_map
+    trail_map =np.zeros((HEIGHT,WIDTH), dtype=np.uint8)
+
+    #create all agents
+        #add code here
+
+    #simulate frames,
+    frames = []
+    for i in range(TOTAL_FRAMES):
+
+
+        #convert numpy array to pillow Image
+        frames.append(Image.fromarray(trail_map))
+
+    #convert all frames to a gif
+    frames[0].save('trail_map.gif', format="GIF", append_images=frames[1:], save_all=True, loop=0)
