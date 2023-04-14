@@ -3,6 +3,7 @@ My Term Project for CMPT-146, to create a slime mold simulation
 
 
 Description:
+
     This project has the goal of replicating the biological organism "Slime Mold"
     Taking inspiration from the following sources:
         https://cargocollective.com/sagejenson/physarum
