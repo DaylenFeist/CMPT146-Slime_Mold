@@ -68,34 +68,68 @@ def main():
         frames.append(Image.fromarray(trail_map))
 
     # convert all frames to a gif
-    frames[0].save('trail_map.gif', format="GIF", append_images=frames[1:], save_all=True, loop=0)
+    frames[0].save('trail_map.gif', format="GIF", append_images=frames[1:], fps=30, save_all=True, loop=0)
 
 
 def update_trail_map(trail_map, agents):
+    """
+    Purpose: Add Trails, Darken, Diffuse trailmap
+    Pre-Conditions: np array: trail_map, list of Agent objects.
+    Post-Conditions: Does not change initial variables
+    Return: next frame of trail_map
+    """
     new_trail_map = trail_map.copy()
     for agent in agents:
         pos_x, pos_y = agent.position()
         new_trail_map[round(pos_y), round(pos_x)] = 255
 
-    new_trail_map[new_trail_map <= 8] = 8
-    new_trail_map -= 8
-    return new_trail_map
+    newer_trail_map = new_trail_map.copy()
+    for row in range(HEIGHT):
+        for col in range(WIDTH):
+            newer_trail_map[row, col] = newer_trail_map[row, col] * (1-DIFFUSE_RATE) + diffuse(new_trail_map, col, row) * DIFFUSE_RATE
+
+    newer_trail_map[newer_trail_map <= DARKEN_RATE] = DARKEN_RATE
+    newer_trail_map -= DARKEN_RATE
+
+    return newer_trail_map
+
+
+def diffuse(trail_map, square_x, square_y):
+    """
+    Purpose: Add Trails, Darken, Diffuse trailmap
+    Pre-Conditions: np array: trail_map, list of Agent objects.
+    Post-Conditions: Does not change initial variables
+    Return: next frame of trail_map
+    """
+
+    brightness = 0
+    for y_offset in range(-1, 2):
+        for x_offset in range(-1, 2):
+            square_brightness = int(check_square(trail_map, square_x + x_offset, square_y + y_offset))
+            brightness += square_brightness
+    return np.uint8(brightness / 9)
+
 
 def check_square(trail_map, index_x, index_y):
     """
     Purpose: Check the brightness of a square on the trail_map, and if it is on the outside of bounds, return 0
-
+    Pre-Conditions: lots of stuff
+    Post-Conditions: none
+    Return: uint8 brightness value of square, 0 if out of bounds
     """
-    #find point forwards
 
     if index_x > WIDTH - 1 or index_x < 0 or index_y > HEIGHT - 1 or index_y < 0:
         square_brightness = 0
+
     else:
         square_brightness = trail_map[index_y, index_x]
     return square_brightness
-WIDTH, HEIGHT = (250, 250)
-TOTAL_FRAMES = 200
-MOVE_SPEED = 1
-NUM_AGENTS = 10000
 
+
+WIDTH, HEIGHT = (200, 200)
+TOTAL_FRAMES = 100
+MOVE_SPEED = 1
+NUM_AGENTS = 200
+DIFFUSE_RATE = .1
+DARKEN_RATE = 2
 main()
