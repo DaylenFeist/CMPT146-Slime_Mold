@@ -61,8 +61,7 @@ def main():
         print(f"{round(progress, 1)}%")
         for agent in agents:
             agent.move_forward(WIDTH, HEIGHT, MOVE_SPEED)
-            new_rotation = sense(trail_map, agent)
-            agent.change_rotation(new_rotation)
+            agent.change_rotation(sense(trail_map, agent))
         trail_map = update_trail_map(trail_map, agents)
 
         # convert numpy array to pillow Image
@@ -88,6 +87,7 @@ def update_trail_map(trail_map, agents):
     for row in range(HEIGHT):
         for col in range(WIDTH):
             diffused_pixel = new_trail_map[row, col] * (1-DIFFUSE_RATE) + diffuse(new_trail_map, col, row) * DIFFUSE_RATE
+            # using a second list, as we dont want the blurred array to effect the rest of the non-blurred array
             newer_trail_map[row, col] = max(0, diffused_pixel - DARKEN_RATE)
 
     return newer_trail_map
@@ -134,16 +134,18 @@ def sense(trail_map, agent):
     """
     rotation = agent.get_rotation()
     pos_x, pos_y = agent.get_position()
-
+    left_sniff = 0
+    forward_sniff = 0
+    right_sniff = 0
     for distance in range(1, SENSE_DISTANCE + 1):
-        left_sniff = sense_direction(trail_map, pos_x, pos_y, rotation + SENSE_ANGLE_OFFSET, SENSE_DISTANCE)
-        forward_sniff = sense_direction(trail_map, pos_x, pos_y, rotation, SENSE_DISTANCE)
-        right_sniff = sense_direction(trail_map, pos_x, pos_y, rotation - SENSE_ANGLE_OFFSET, SENSE_DISTANCE)
+        left_sniff += sense_direction(trail_map, pos_x, pos_y, rotation + SENSE_ANGLE_OFFSET, SENSE_DISTANCE)
+        forward_sniff += sense_direction(trail_map, pos_x, pos_y, rotation, SENSE_DISTANCE)
+        right_sniff += sense_direction(trail_map, pos_x, pos_y, rotation - SENSE_ANGLE_OFFSET, SENSE_DISTANCE)
 
-        # change out of uint8
+
         left_weight = max(0, left_sniff - forward_sniff)
         right_weight = max(0, right_sniff - forward_sniff)
-        turn_weight = (int(left_weight) - int(right_weight)) * SENSE_ANGLE_OFFSET * 2 / 255
+        turn_weight = (int(left_weight) - int(right_weight)) * SENSE_ANGLE_OFFSET * 2/ (255)
 
         # make sure rotation doesnt get too big or too small
         rotation += turn_weight
@@ -154,17 +156,23 @@ def sense(trail_map, agent):
 
         return rotation
 def sense_direction(trail_map, pos_x, pos_y, rotation, distance):
+    """
+    Purpose: finds the total brightness in a line of length: distance at angle: rotation from a position
+    Pre-Condition: np uint8 array: trail_map, pos_x and pos_y: integers within
+    Post-Condition: no changes to current variables
+    Return: New angle for the agent
+    """
     new_pos_x = round(pos_x + np.cos(rotation) * distance)
     new_pos_y = round(pos_y + np.sin(rotation) * distance)
     #change out of uint8
     return int(check_square(trail_map, new_pos_x, new_pos_y))
 
-WIDTH, HEIGHT = (500, 500)
-TOTAL_FRAMES = 500
+WIDTH, HEIGHT = (100, 100)
+TOTAL_FRAMES = 200
 MOVE_SPEED = 1
-NUM_AGENTS = 5000
-DIFFUSE_RATE = .2
+NUM_AGENTS = 1000
+DIFFUSE_RATE = .1
 DARKEN_RATE = 4
-SENSE_DISTANCE = 10
-SENSE_ANGLE_OFFSET = np.pi/8
+SENSE_DISTANCE = 4
+SENSE_ANGLE_OFFSET = np.pi/4
 main()
