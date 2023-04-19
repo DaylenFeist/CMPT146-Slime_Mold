@@ -10,10 +10,10 @@ class Agent(object):
         Post-Conditions: Initializes all variables related to Agent
         Return: Nothing
         """
-        self.__pos_x = random.randint(width/2 -25, width/2+25)
-        #self.__pos_x = width/2
-        self.__pos_y = random.randint(height/2-25, height/2+25)
-        #self.__pos_y = height/2
+        #self.__pos_x = random.randint(width/2 -25, width/2+25)
+        self.__pos_x = width/2
+        #self.__pos_y = random.randint(height/2-25, height/2+25)
+        self.__pos_y = height/2
         self.__rotation = random.random() * 2 * np.pi
 
     def move_forward(self, width, height, move_speed):
@@ -37,6 +37,7 @@ class Agent(object):
             self.__pos_x = min(width-1, max(0,self.__pos_x))
             self.__pos_y = min(height-1, max(0,self.__pos_y))
             #print(self.____str__())
+
     def get_position(self):
         """
         Purpose: return x and y position
@@ -45,6 +46,7 @@ class Agent(object):
         Return: x and y position of Agent
         """
         return self.__pos_x, self.__pos_y
+
     def get_rotation(self):
         """
         Purpose: returns rotation
@@ -53,6 +55,7 @@ class Agent(object):
         Return: rotation of agent
         """
         return self.__rotation
+
     def change_rotation(self, rotation):
         """
         Purpose: allow outside scripts to change rotation of agent
@@ -61,5 +64,6 @@ class Agent(object):
         Return: none
         """
         self.__rotation = rotation
+
     def __str__(self):
         return f"X:{self.__pos_x}|Y:{self.__pos_y}|Rotation:{self.__rotation}"
