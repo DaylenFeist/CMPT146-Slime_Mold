@@ -3,18 +3,23 @@ import numpy as np
 
 
 class Agent(object):
-    def __init__(self, width, height):
+    def __init__(self, width, height, preset):
         """
         Purpose: Initialize an Agent Object
         Pre-Conditions: width and height which describe the width and height of canvas
         Post-Conditions: Initializes all variables related to Agent
         Return: Nothing
         """
-        #self.__pos_x = random.randint(width/2 -25, width/2+25)
-        self.__pos_x = width/2
-        #self.__pos_y = random.randint(height/2-25, height/2+25)
-        self.__pos_y = height/2
-        self.__rotation = random.random() * 2 * np.pi
+
+        if preset == 1: # start in centre, move out
+            self.__pos_x = width / 2
+            self.__pos_y = height/2
+            self.__rotation = random.random() * 2 * np.pi
+        elif preset == 2: # start randomly in middle
+            self.__pos_x = random.randint(width/2 -25, width/2+25)
+            self.__pos_y = random.randint(height/2-25, height/2+25)
+            self.__rotation = random.random() * 2 * np.pi
+
 
     def move_forward(self, width, height, move_speed):
         """
@@ -22,7 +27,7 @@ class Agent(object):
         Pre-Conditions:
         int width, height: describes the width and height of canvas.
         int move_speed: speed that the agent moves
-        Post-Conditions: Updates x and y position of agent, and if agent hits bounding box, rotation
+        Post-Conditions: Updates x and y position of agent, and if agent hits bounding box, rotation changes, and stays within box
         Return: Nothing
         """
         self.__pos_x += np.cos(self.__rotation) * move_speed
@@ -30,29 +35,27 @@ class Agent(object):
 
         #if out of bounds
         if self.__pos_x < 0 or self.__pos_y < 0 or self.__pos_x > width - 1 or self.__pos_y > height - 1:
-            #print(self.____str__())
-            #do a random bounce, maybe change to a real bounce?
             self.__rotation = random.random() * 2 * np.pi
-            #place on the nearest edge, or if already within the bounds, keep in same spot
+            # place on the nearest edge, or if already within the bounds, keep in same spot
             self.__pos_x = min(width-1, max(0,self.__pos_x))
             self.__pos_y = min(height-1, max(0,self.__pos_y))
             #print(self.____str__())
 
     def get_position(self):
         """
-        Purpose: return x and y position
-        Pre-Conditions:
+        Purpose: return x and y position of Agent
+        Pre-Conditions: None
         Post-Conditions: None
-        Return: x and y position of Agent
+        Return: x and y position
         """
         return self.__pos_x, self.__pos_y
 
     def get_rotation(self):
         """
-        Purpose: returns rotation
-        Pre-Conditions:
+        Purpose: returns rotation of agent
+        Pre-Conditions: None
         Post-Conditions: None
-        Return: rotation of agent
+        Return: rotation
         """
         return self.__rotation
 
