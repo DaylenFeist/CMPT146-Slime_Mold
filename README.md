@@ -1,7 +1,7 @@
 # CMPT146-Slime_Mold
 My Term Project for CMPT-146, to create a slime mold simulation
 
-
+JEFF LONG I LOVE YOU
 Description:
 
     This project has the goal of replicating the biological organism "Slime Mold"
