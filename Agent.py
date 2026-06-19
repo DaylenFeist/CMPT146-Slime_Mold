@@ -16,8 +16,8 @@ class Agent(object):
             self.__pos_y = height/2
             self.__rotation = random.random() * 2 * np.pi
         elif preset == 2: # start randomly in middle
-            self.__pos_x = random.randint(width/2 -25, width/2+25)
-            self.__pos_y = random.randint(height/2-25, height/2+25)
+            self.__pos_x = random.randint(int(width/2 -25), int(width/2+25))
+            self.__pos_y = random.randint(int(height/2-25), int(height/2+25))
             self.__rotation = random.random() * 2 * np.pi
 
 
