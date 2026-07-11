@@ -33,7 +33,7 @@ Description:
 from PIL import Image
 import numpy as np
 import Agent as ag
-
+import pygame
 
 def main():
     """
@@ -53,6 +53,10 @@ def main():
     for x in range(NUM_AGENTS):
         agents.append(ag.Agent(WIDTH, HEIGHT, MODE))
 
+    pygame.init()
+    screen = pygame.display.set_mode((HEIGHT,WIDTH))
+    pygame.display.set_caption("SLIME MOLD DISPLAY!")
+
     # simulate frames,
     frames = []
     for i in range(TOTAL_FRAMES):
@@ -64,13 +68,17 @@ def main():
 
         trail_map = update_trail_map(trail_map, agents)
 
+        rgb_array = np.stack([trail_map,trail_map,trail_map], axis=-1)
+        surface = pygame.surfarray.make_surface(rgb_array)
+        screen.blit(surface, (0,0))
+        pygame.display.flip()
         # convert numpy array to pil Image
 
         frames.append(Image.fromarray(trail_map))
 
     # convert all frames to a gif
     frames[0].save('trail_map.gif', format="GIF", append_images=frames[1:], fps=30, save_all=True, loop=0)
-
+    pygame.quit()
 
 def update_trail_map(trail_map, agents):
     """
@@ -181,14 +189,14 @@ def sense_direction(trail_map, pos_x, pos_y, rotation, distance):
     return int(check_square(trail_map, new_pos_x, new_pos_y))
 
 
-WIDTH, HEIGHT = (100, 100)
+WIDTH, HEIGHT = (100, 200)
 TOTAL_FRAMES = 600
 MOVE_SPEED = 1
-NUM_AGENTS = 500
+NUM_AGENTS = 5000
 MODE = 2  # 1 = all placed at the center with random rotation, 2 = random positions near the center
-DIFFUSE_RATE = .1
-DARKEN_RATE = 4
-SENSE_DISTANCE = 4
-SENSE_ANGLE_OFFSET = np.pi / 4
+DIFFUSE_RATE = .2
+DARKEN_RATE = 6
+SENSE_DISTANCE = 16
+SENSE_ANGLE_OFFSET = np.pi / 8
 
 main()
